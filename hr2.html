@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HR2</title>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <script src="jquery-3.2.1.min.js"></script>
+
+    <script src="js/materialize.js"></script>
+    <script src="js/materialize.min.js"></script>
+
+</head>
+<body>
+
+<nav>
+    <div class="nav-wrapper blue darken-1">
+        <a href="#!" class="brand-logo center">Thyssenkrupp</a>
+    </div>
+</nav>
+<br><br>
+    
+<div class="row">
+    <div class="col s12 m12">
+        <div class="card white-text">
+            <div class="card-content blue-text">
+                <span class="card-title">Groups For Document Validation</span>
+                <table class="striped">
+                    <thead>
+                        <tr>
+                            <th>Groups</th>
+                           
+                            <th>Validate</th>
+                        </tr>
+                    </thead>
+                    <!-- TO DO LIST  -->
+                    <tbody id="todolistbody">
+                        
+                    </tbody>
+                    <!-- End of TO DO LIST -->
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    
+<div class="row" id="emailrow">
+    <div class="col s12 m12">
+        <div class="card white-text">
+            <div class="card-content blue-text">
+                <span class="card-title">Candidates Mail</span>
+                <table class="striped">
+                    <thead>
+                        <tr>
+                                <th>Status</th>
+                            <th>Email</th>
+                            <th>Validate</th>
+                            
+                            
+                        </tr>
+                    </thead>
+                    <!-- Email Body  -->
+                    <tbody id="emailbody">
+
+                    </tbody>
+                    <!-- End of Email Body -->
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script Starts Here -->
+<script>
+$(document).ready(function(){
+
+$("#emailrow").hide()
+// Ajax Call For Tking data of Grops for validation
+$.ajax({
+    url:"/demo.txt",
+    type:"GET",
+    success:function(para)
+    {   
+        //dummy data please send in below format..!!
+        para = ['PRF1-INSTANCE1-ROUND1','PRF2-INSTANCE2-ROUND2']
+        
+        for(let i=0;i<para.length;i++)
+        {
+            var txt1 = '<tr><td><label class="waves-effect blue darken-1 btn">'+para[i]+'</label></td>'
+            var txt2 = '<td><button class="btn waves-effect green"  id="'+para[i]+'" onclick="displayMail(this.id)">Start Validation<i class="material-icons right">send</i>' 
+            var txt3 = ' </button></td></tr>'
+            var str = txt1+txt2+txt3;
+            $("#todolistbody").append(str)
+        }
+                
+    }    
+
+})
+// end of page loading ajax call
+
+
+
+});
+
+//ajax call for displaying email id's
+function displayMail(x)
+{
+    alert(x)
+    
+    $.ajax({
+        url:"/demo.txt",
+        type:"GET",
+        data:{
+            "id":x
+        },
+        success:function(para)
+        {   
+            $("#emailrow").show(600)
+            $("#emailbody").text("")
+            // Dummy Data please send in below format..!!
+            para = [['Tanny@gmail.com',"0"],["rb@gmail.com","1"],["ad@gmail.com","0"]]
+            var temparr = [];
+            for(let i=0;i<para.length;i++)
+            {
+                for(let j=0;j<2;j++)
+                {
+                    temparr[j] = para[i][j];
+                    
+                }
+                var status;
+                if(temparr[1] == "0")
+                {
+                    status = "blue"
+                    
+                }
+                else if(temparr[1] == "1")
+                {
+                    status = "red"
+                }
+                var txt1 = '<tr><td><i class="material-icons icon-blue" id="'+status+'">lense</i></td><td><p>'+temparr[0]+'</p></td>'
+                var txt2 = '<td><button class="btn waves-effect green"  id="'+temparr[0]+'" onclick="evaluateMail(this.id)">Validate Candidate<i class="material-icons right">send</i>'                       
+                var txt3 = ' </button></td></tr>' 
+                var str = txt1+txt2+txt3;
+                $("#emailbody").append(str)  
+
+            }
+         
+        }
+    })
+}
+
+// function for jumping to Document Validation Form form
+function evaluateMail(x)
+{
+    
+    localStorage.setItem('currentemail',x)
+    alert(localStorage.getItem('currentemail'))
+     window.open("/validatedocument.html", '_blank');
+}
+
+</script>
+<!-- Script Ends -->
+</body>
+
+<!-- style starts here -->
+<style>
+
+/* css for status of emails */
+#red{
+    color:red;
+}
+#blue{
+    color:orange;
+}
+</style>
+<!-- style ends here -->
+
+
+</html>
